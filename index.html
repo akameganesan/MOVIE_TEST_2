@@ -61,6 +61,7 @@
 <!-- YouTube IFrame API 読み込み -->
 <script src="https://www.youtube.com/iframe_api"></script>
 
+<!--
 <script>
     let player;
 
@@ -89,7 +90,41 @@
         }, duration);
     }
 </script>
+-->
+<script>
+    let player;
+    let endTime = null;
 
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '360',
+            width: '640',
+            videoId: 'IPNxvak7dAc',
+            events: {
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+    function playRange(start, end) {
+        endTime = end;
+        player.seekTo(start, true);
+        player.playVideo();
+    }
+
+    function onPlayerStateChange(event) {
+        // 再生が開始された瞬間にタイマーをセット
+        if (event.data === YT.PlayerState.PLAYING && endTime !== null) {
+            const current = player.getCurrentTime();
+            const duration = (endTime - current) * 1000;
+
+            setTimeout(() => {
+                player.pauseVideo();
+                endTime = null;
+            }, duration);
+        }
+    }
+</script>
 
 
 
